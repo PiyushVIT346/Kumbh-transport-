@@ -40,6 +40,21 @@ ujjain_mahakumbh/
 
 ## 🚀 Quick Start
 
+<table align="center">
+  <tr>
+    <th align="center">Parking In & Out Flow</th>
+    <th align="center">Congestion Count</th>
+  </tr>
+  <tr>
+    <td width="50%">
+      <video src="parking_InOutFlow_count.mp4" width="100%" controls autoplay loop muted></video>
+    </td>
+    <td width="50%">
+      <video src="count_congestion.mp4" width="100%" controls autoplay loop muted></video>
+    </td>
+  </tr>
+</table>
+
 ### 1. Install dependencies
 
 ```bash
