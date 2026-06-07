@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% block title %}Way to Ujjain – Mahakumbh 2028{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  #map {
+    height: 500px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(212,168,67,0.3);
+    z-index: 0;
+  }
+  /* Leaflet dark filter */
+  .leaflet-layer,
+  .leaflet-control-zoom a,
+  .leaflet-control-attribution {
+    filter: invert(85%) hue-rotate(185deg) saturate(0.8) brightness(0.9);
+  }
+
+  .info-card {
+    background: rgba(255,107,0,0.05);
+    border: 1px solid rgba(212,168,67,0.2);
+    border-radius: 1rem;
+    padding: 1.25rem;
+  }
+
+  .gps-btn {
+    background: linear-gradient(135deg, #FF6B00, #E05A00);
+    box-shadow: 0 4px 20px rgba(255,107,0,0.35);
+    transition: all 0.3s;
+  }
+  .gps-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(255,107,0,0.5); }
+  .gps-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+  .pulse-marker {
+    width:16px; height:16px;
+    background:#FF6B00;
+    border-radius:50%;
+    border:2px solid #fff;
+    box-shadow: 0 0 0 0 rgba(255,107,0,0.6);
+    animation: ping 1.5s infinite;
+  }
+  @keyframes ping {
+    0%{box-shadow:0 0 0 0 rgba(255,107,0,0.7)}
+    70%{box-shadow:0 0 0 12px rgba(255,107,0,0)}
+    100%{box-shadow:0 0 0 0 rgba(255,107,0,0)}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-10">
+
+  <div class="flex items-center gap-4 mb-8">
+    <a href="{{ url_for('dashboard') }}" class="text-amber-600 hover:text-amber-400 transition text-xl">←</a>
+    <div>
+      <h1 class="font-cinzel text-2xl text-amber-400">Way to Ujjain</h1>
+      <p class="font-cormorant italic text-amber-100/50">
+        Live GPS navigation to the sacred Mahakumbh Mela grounds
+      </p>
+    </div>
+  </div>
+
+  <!-- Info bar -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="info-card text-center">
+      <div class="font-cinzel text-amber-400 text-lg" id="dist-val">—</div>
+      <div class="text-amber-100/40 text-xs mt-1">Distance (km)</div>
+    </div>
+    <div class="info-card text-center">
+      <div class="font-cinzel text-amber-400 text-lg" id="eta-val">—</div>
+      <div class="text-amber-100/40 text-xs mt-1">Est. Travel Time</div>
+    </div>
+    <div class="info-card text-center">
+      <div class="font-cinzel text-green-400 text-lg" id="status-val">Locating…</div>
+      <div class="text-amber-100/40 text-xs mt-1">GPS Status</div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div id="map" class="mb-6"></div>
+
+  <!-- Controls -->
+  <div class="flex flex-col sm:flex-row gap-4">
+    <button id="locate-btn" onclick="locateUser()"
+            class="gps-btn text-white font-cinzel text-sm px-8 py-4 rounded-xl tracking-widest flex-1 flex items-center justify-center gap-2">
+      📍 GET MY LOCATION
+    </button>
+    <button onclick="centerUjjain()"
+            class="border border-amber-700/50 text-amber-400 font-cinzel text-sm px-6 py-4 rounded-xl hover:bg-amber-900/20 transition">
+      🛕 CENTER ON UJJAIN
+    </button>
+  </div>
+
+  <!-- Destination info -->
+  <div class="mt-6 info-card flex items-center gap-4">
+    <div class="text-3xl">🛕</div>
+    <div>
+      <div class="font-cinzel text-sm text-amber-300 mb-1">DESTINATION</div>
+      <div class="font-cormorant text-lg text-amber-100/80">Ujjain Mahakumbh Mela Grounds, Ram Ghat, Ujjain, MP 456010</div>
+      <div class="text-amber-100/40 text-xs mt-1">23.1765° N, 75.7885° E</div>
+    </div>
+  </div>
+
+  <!-- Road guide -->
+  <div class="mt-6 info-card">
+    <h3 class="font-cinzel text-sm text-amber-300 mb-4 tracking-wide">APPROACHING CORRIDORS</h3>
+    <div class="grid grid-cols-2 gap-3">
+      {% for road, via, time in [
+          ('Indore Rd (NH 52)','Dewas → Ujjain','~90 min'),
+          ('Dewas Rd (SH 27)','Dewas Bypass','~75 min'),
+          ('Ram Ghat Rd','City Centre Route','~20 min from centre'),
+          ('Dutt Akhand Rd','Northern Entry','~30 min')
+      ] %}
+      <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-900/10">
+        <span class="text-xl">🛣️</span>
+        <div>
+          <div class="font-cinzel text-xs text-amber-300">{{ road }}</div>
+          <div class="text-amber-100/50 text-xs">{{ via }}</div>
+          <div class="text-amber-400 text-xs mt-1">⏱ {{ time }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Ujjain Ram Ghat coordinates
+  const UJJAIN = [23.1765, 75.7885];
+
+  // Initialise map centered on Ujjain
+  const map = L.map('map').setView(UJJAIN, 11);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18,
+  }).addTo(map);
+
+  // Destination marker
+  const destIcon = L.divIcon({
+    html: `<div style="font-size:2rem;text-shadow:0 0 8px rgba(255,107,0,0.8)">🛕</div>`,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    className: '',
+  });
+
+  const destMarker = L.marker(UJJAIN, { icon: destIcon })
+    .addTo(map)
+    .bindPopup(`
+      <div style="font-family:'Inter',sans-serif;padding:4px">
+        <strong style="color:#FF6B00">Ujjain Mahakumbh 2028</strong><br/>
+        Ram Ghat, Ujjain, MP<br/>
+        <small style="color:#888">23.1765°N, 75.7885°E</small>
+      </div>
+    `)
+    .openPopup();
+
+  let userMarker = null;
+  let routeLine  = null;
+
+  function locateUser() {
+    const btn = document.getElementById('locate-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Locating…';
+    document.getElementById('status-val').textContent = 'Searching…';
+
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      btn.disabled = false;
+      btn.textContent = '📍 GET MY LOCATION';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+        plotUser(lat, lng, accuracy);
+        btn.disabled = false;
+        btn.innerHTML = '📍 REFRESH LOCATION';
+      },
+      err => {
+        document.getElementById('status-val').textContent = 'Error';
+        alert(`Location error: ${err.message}\n\nShowing demo location instead.`);
+        // Demo fallback: Indore
+        plotUser(22.7196, 75.8577, 500);
+        btn.disabled = false;
+        btn.innerHTML = '📍 RETRY LOCATION';
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function plotUser(lat, lng, accuracy) {
+    // Remove old elements
+    if (userMarker) map.removeLayer(userMarker);
+    if (routeLine)  map.removeLayer(routeLine);
+
+    // User marker
+    const userIcon = L.divIcon({
+      html: `<div class="pulse-marker"></div>`,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8],
+      className: '',
+    });
+
+    userMarker = L.marker([lat, lng], { icon: userIcon })
+      .addTo(map)
+      .bindPopup(`<strong>Your Location</strong><br/><small>${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E</small>`)
+      .openPopup();
+
+    // Route polyline
+    routeLine = L.polyline([[lat, lng], UJJAIN], {
+      color: '#FF6B00',
+      weight: 3,
+      opacity: 0.8,
+      dashArray: '8 6',
+    }).addTo(map);
+
+    // Fit bounds
+    map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+
+    // Calculate straight-line distance
+    const R = 6371;
+    const dLat = (UJJAIN[0] - lat) * Math.PI / 180;
+    const dLng = (UJJAIN[1] - lng) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat*Math.PI/180) * Math.cos(UJJAIN[0]*Math.PI/180) * Math.sin(dLng/2)**2;
+    const dist = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    document.getElementById('dist-val').textContent = dist.toFixed(1);
+    document.getElementById('eta-val').textContent  = `~${Math.round(dist / 60 * 60)} min`;
+    document.getElementById('status-val').textContent = '✓ Located';
+    document.getElementById('status-val').className = 'font-cinzel text-green-400 text-lg';
+  }
+
+  function centerUjjain() {
+    map.setView(UJJAIN, 13);
+    destMarker.openPopup();
+  }
+</script>
+{% endblock %}

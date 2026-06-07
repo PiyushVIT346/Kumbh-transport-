@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Login – Mahakumbh 2028{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <div class="text-6xl mb-4">🕉️</div>
+      <h1 class="font-cinzel text-2xl text-amber-400 mb-2">Welcome Back</h1>
+      <p class="font-cormorant text-lg italic text-amber-100/60">
+        Enter the Mobility Command Center
+      </p>
+    </div>
+
+    <!-- Card -->
+    <div class="card-dark rounded-3xl p-8">
+      <form method="POST" action="{{ url_for('login') }}" class="space-y-5">
+
+        <div>
+          <label class="block text-amber-300/80 text-xs font-medium mb-2 uppercase tracking-widest">
+            Username
+          </label>
+          <input type="text" name="username" required
+                 placeholder="your_username"
+                 class="w-full rounded-xl px-4 py-3 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-amber-300/80 text-xs font-medium mb-2 uppercase tracking-widest">
+            Password
+          </label>
+          <input type="password" name="password" required
+                 placeholder="••••••••"
+                 class="w-full rounded-xl px-4 py-3 text-sm" />
+        </div>
+
+        <button type="submit"
+                class="btn-saffron w-full text-white font-cinzel text-sm py-4 rounded-xl tracking-widest mt-2">
+          ENTER COMMAND CENTER
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <span class="text-amber-100/40 text-sm font-cormorant italic">New pilgrim? &nbsp;</span>
+        <a href="{{ url_for('register') }}" class="text-amber-400 text-sm hover:text-amber-200 transition">
+          Create account
+        </a>
+      </div>
+    </div>
+
+    <!-- Decoration -->
+    <div class="text-center mt-8 text-amber-900/50 text-lg tracking-widest">
+      ✦ ✦ ✦
+    </div>
+  </div>
+</div>
+{% endblock %}

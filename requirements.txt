@@ -1,0 +1,5 @@
+flask>=3.0.0
+werkzeug>=3.0.0
+opencv-python-headless>=4.9.0
+# YOLOv8 (optional – remove if not needed)
+# ultralytics>=8.0.0

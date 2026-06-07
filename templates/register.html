@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Register – Mahakumbh 2028{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-md">
+
+    <div class="text-center mb-10">
+      <div class="text-6xl mb-4">🪷</div>
+      <h1 class="font-cinzel text-2xl text-amber-400 mb-2">Begin Your Journey</h1>
+      <p class="font-cormorant text-lg italic text-amber-100/60">
+        Register for Mahakumbh 2028 Mobility Access
+      </p>
+    </div>
+
+    <div class="card-dark rounded-3xl p-8">
+      <form method="POST" action="{{ url_for('register') }}" class="space-y-5">
+
+        <div>
+          <label class="block text-amber-300/80 text-xs font-medium mb-2 uppercase tracking-widest">
+            Full Name / Username
+          </label>
+          <input type="text" name="username" required
+                 placeholder="ramesh_sharma"
+                 class="w-full rounded-xl px-4 py-3 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-amber-300/80 text-xs font-medium mb-2 uppercase tracking-widest">
+            Email Address
+          </label>
+          <input type="email" name="email" required
+                 placeholder="you@example.com"
+                 class="w-full rounded-xl px-4 py-3 text-sm" />
+        </div>
+
+        <div>
+          <label class="block text-amber-300/80 text-xs font-medium mb-2 uppercase tracking-widest">
+            Password
+          </label>
+          <input type="password" name="password" required
+                 placeholder="Minimum 6 characters"
+                 class="w-full rounded-xl px-4 py-3 text-sm" />
+        </div>
+
+        <button type="submit"
+                class="btn-saffron w-full text-white font-cinzel text-sm py-4 rounded-xl tracking-widest mt-2">
+          CREATE ACCOUNT
+        </button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <span class="text-amber-100/40 text-sm font-cormorant italic">Already registered? &nbsp;</span>
+        <a href="{{ url_for('login') }}" class="text-amber-400 text-sm hover:text-amber-200 transition">
+          Login here
+        </a>
+      </div>
+    </div>
+
+    <div class="text-center mt-8 text-amber-900/50 text-lg tracking-widest">✦ ✦ ✦</div>
+  </div>
+</div>
+{% endblock %}

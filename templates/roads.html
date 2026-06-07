@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block title %}Live Road Feeds – Mahakumbh 2028{% endblock %}
+
+{% block head_extra %}
+<style>
+  .feed-card {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(212,168,67,0.2);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .feed-card:hover { border-color: rgba(255,107,0,0.5); }
+
+  .feed-header {
+    padding: 0.75rem 1rem;
+    background: rgba(255,107,0,0.08);
+    border-bottom: 1px solid rgba(212,168,67,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .live-badge {
+    background: rgba(220,38,38,0.2);
+    border: 1px solid rgba(220,38,38,0.5);
+    color: #fca5a5;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .live-dot { width:6px; height:6px; background:#ef4444; border-radius:50%; animation:blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+  .feed-box {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    background: #0a0402;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feed-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  .feed-stats {
+    padding: 0.75rem 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .stat-pill {
+    background: rgba(255,107,0,0.08);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  .upload-container {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(212,168,67,0.1);
+  }
+  .upload-form { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+  .file-label { font-size: 0.75rem; color: rgba(212,168,67,0.8); cursor: pointer; display: flex; align-items: center; }
+  .file-input { display: none; }
+  .btn-submit {
+    background: linear-gradient(135deg, #ff6b00 0%, #a94a00 100%);
+    color: white; font-weight: 600; padding: 0.35rem 0.85rem;
+    border-radius: 0.375rem; font-size: 0.75rem; transition: transform 0.1s;
+    cursor: pointer; border: none;
+  }
+  .btn-submit:active { transform: scale(0.96); }
+  .status-text { font-size: 0.7rem; color: rgba(255,255,255,0.4); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .stream-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0d0a08;
+    color: rgba(212,168,67,0.4);
+    font-family: serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    z-index: 5;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-8">
+
+  <div class="flex items-center gap-4 mb-8">
+    <a href="{{ url_for('dashboard') }}" class="text-amber-600 hover:text-amber-400 transition text-xl">←</a>
+    <div>
+      <h1 class="font-cinzel text-2xl text-amber-400">Live Road Monitoring</h1>
+      <p class="font-cormorant italic text-amber-100/50">
+        AI-powered CCTV analysis · YOLOv8 Vehicle &amp; Crowd Counting
+      </p>
+    </div>
+    <div class="ml-auto live-badge text-sm">
+      <div class="live-dot"></div> LIVE ENGINE ACTIVE
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="feed-grid">
+
+    {% for road_id, info, icon in [
+        ('indore',  'Indore Rd',       '🛣️'),
+        ('dewas',   'Dewas Rd',        '🛤️'),
+        ('ramghat', 'Ram Ghat Rd',     '🌊'),
+        ('dutt',    'Dutt Akhand Rd',  '🕌')
+    ] %}
+    <div class="feed-card">
+      <div class="feed-header">
+        <div class="flex items-center gap-2">
+          <span>{{ icon }}</span>
+          <span class="font-cinzel text-sm text-amber-300">{{ info }}</span>
+        </div>
+        <div class="live-badge">
+          <div class="live-dot"></div> LIVE
+        </div>
+      </div>
+
+      <div class="feed-box">
+        <div class="stream-loader" id="loader-{{ road_id }}">
+          <div class="w-6 h-6 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin mb-2"></div>
+          Connecting to CCTV stream instance...
+        </div>
+
+        <img class="feed-img opacity-0"
+             id="stream-{{ road_id }}"
+             src="{{ url_for('video_feed', road_name=road_id) }}"
+             alt="{{ info }} feed"
+             onload="handleStreamSuccess('{{ road_id }}')"
+             onerror="handleStreamFailure(this, '{{ road_id }}')" />
+      </div>
+
+      <div class="feed-stats">
+        <div class="stat-pill">
+          <div class="font-cinzel text-orange-400 text-lg" id="vc-{{ road_id }}">—</div>
+          <div class="text-amber-100/50 text-xs mt-1">Vehicles</div>
+        </div>
+        <div class="stat-pill">
+          <div class="font-cinzel text-amber-400 text-lg" id="pc-{{ road_id }}">—</div>
+          <div class="text-amber-100/50 text-xs mt-1">Persons</div>
+        </div>
+      </div>
+
+      <div class="upload-container">
+        <form class="upload-form" action="{{ url_for('upload_road_video', road_name=road_id) }}" method="POST" enctype="multipart/form-data">
+          <label class="file-label">
+            <span class="btn-submit" style="background: rgba(255,107,0,0.1); color: #ff6b00; border: 1px solid rgba(255,107,0,0.3)">Upload Feed</span>
+            <input type="file" name="video_file" accept="video/*" class="file-input" onchange="this.nextElementSibling.innerText = this.files[0].name" required />
+            <span class="status-text ml-2">No video source chosen</span>
+          </label>
+          <button type="submit" class="btn-submit">Process & Run</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <div class="mt-6 text-center">
+    <p class="font-cormorant italic text-amber-100/30 text-sm">
+      Counts update via YOLOv8 bytetrack vector algorithms. Supported format extensions: *.mp4, *.avi
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Handlers for managing UI state transitions safely without showing visual glitches
+  function handleStreamSuccess(roadId) {
+    const img = document.getElementById(`stream-${roadId}`);
+    const loader = document.getElementById(`loader-${roadId}`);
+    if(img) img.classList.remove('opacity-0');
+    if(loader) loader.classList.add('hidden');
+  }
+
+  function handleStreamFailure(imgElement, roadId) {
+    const loader = document.getElementById(`loader-${roadId}`);
+    if(imgElement) imgElement.classList.add('opacity-0');
+    if(loader) loader.classList.remove('hidden');
+    
+    setTimeout(() => {
+      const cleanPath = imgElement.src.split('?')[0];
+      imgElement.src = `${cleanPath}?retry=${Date.now()}`;
+    }, 4000); 
+  }
+
+  const roads = ['indore', 'dewas', 'ramghat', 'dutt'];
+
+  // FIX: Converted to serial chained setTimeout to prevent concurrent flood bottlenecks
+  async function updateCounts() {
+    for (const r of roads) {
+      try {
+        const res = await fetch(`/api/counts/${r}`);
+        if (!res.ok) continue;
+        const d = await res.json();
+        
+        const vehicleEl = document.getElementById(`vc-${r}`);
+        const personEl = document.getElementById(`pc-${r}`);
+        
+        if (vehicleEl) vehicleEl.textContent = d.vehicles;
+        if (personEl) personEl.textContent = d.persons;
+      } catch(e) {
+        console.warn(`Stat engine holding for route: ${r}`);
+      }
+    }
+    // Schedule subsequent loop iteration 2.5 seconds after previous run safely terminates
+    setTimeout(updateCounts, 2500);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.feed-img').forEach(img => {
+      const base = img.src.split('?')[0];
+      img.src = `${base}?init=${Date.now()}`;
+    });
+    updateCounts();
+  });
+</script>
+{% endblock %}

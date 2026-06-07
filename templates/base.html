@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Mahakumbh 2028{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  {% block head_extra %}{% endblock %}
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --deep-saffron: #E05A00;
+      --maroon: #7B1818;
+      --gold: #D4A843;
+      --cream: #FDF6E3;
+      --dark: #1A0A00;
+      --dark2: #120700;
+    }
+    body {
+      font-family:'Inter',sans-serif;
+      background:var(--dark2);
+      color:var(--cream);
+      min-height:100vh;
+    }
+    .font-cinzel { font-family:'Cinzel Decorative',serif; }
+    .font-cormorant { font-family:'Cormorant Garamond',serif; }
+
+    .bg-pattern {
+      background-image:
+        radial-gradient(ellipse at top left, rgba(255,107,0,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(123,24,24,0.12) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4A843' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .navbar {
+      background:rgba(18,7,0,0.92);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(212,168,67,0.2);
+    }
+
+    .btn-saffron {
+      background:linear-gradient(135deg,var(--saffron),var(--deep-saffron));
+      box-shadow:0 4px 15px rgba(255,107,0,0.3);
+      transition:all 0.3s;
+    }
+    .btn-saffron:hover { transform:translateY(-1px); box-shadow:0 6px 25px rgba(255,107,0,0.45); }
+
+    .card-dark {
+      background:rgba(255,107,0,0.05);
+      border:1px solid rgba(212,168,67,0.15);
+      transition:all 0.3s;
+    }
+    .card-dark:hover { border-color:rgba(255,107,0,0.4); }
+
+    .flash-error {
+      background:rgba(220,38,38,0.15);
+      border:1px solid rgba(220,38,38,0.4);
+      color:#fca5a5;
+    }
+    .flash-success {
+      background:rgba(34,197,94,0.15);
+      border:1px solid rgba(34,197,94,0.4);
+      color:#86efac;
+    }
+
+    input, select {
+      background:rgba(255,255,255,0.05) !important;
+      border:1px solid rgba(212,168,67,0.25) !important;
+      color:var(--cream) !important;
+      transition:border-color 0.2s;
+    }
+    input:focus, select:focus {
+      outline:none !important;
+      border-color:var(--saffron) !important;
+      box-shadow:0 0 0 2px rgba(255,107,0,0.15) !important;
+    }
+    input::placeholder { color:rgba(253,246,227,0.3) !important; }
+    select option { background:var(--dark2); }
+  </style>
+</head>
+<body class="bg-pattern">
+
+  <nav class="navbar fixed top-0 w-full z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="{{ url_for('landing') }}" class="flex items-center gap-3 no-underline">
+        <span class="text-2xl">🕉️</span>
+        <span class="font-cinzel text-sm text-amber-400">Mahakumbh 2028</span>
+      </a>
+      <div class="flex gap-3 items-center">
+        {% if session.get('user_id') %}
+          <span class="font-cormorant text-amber-300 italic hidden sm:block">
+            {{ session.username }}
+          </span>
+          <a href="{{ url_for('dashboard') }}" class="text-amber-400 text-sm hover:text-amber-200 transition">Dashboard</a>
+          <a href="{{ url_for('logout') }}"
+             class="border border-amber-800 text-amber-400 text-xs px-4 py-2 rounded-full hover:bg-amber-900/30 transition">
+            Logout
+          </a>
+        {% else %}
+          <a href="{{ url_for('login') }}"
+             class="border border-amber-700/50 text-amber-400 text-xs px-4 py-2 rounded-full hover:border-amber-500 transition">
+            Login
+          </a>
+          <a href="{{ url_for('register') }}"
+             class="btn-saffron text-white text-xs px-4 py-2 rounded-full font-medium">
+            Sign Up
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash messages -->
+  <div class="fixed top-16 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4" id="flash-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash-{{ cat }} rounded-xl px-5 py-3 mb-2 text-sm font-inter flex items-center gap-2">
+          {{ '✓' if cat=='success' else '⚠' }} {{ msg }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <main class="pt-16">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    // auto-dismiss flash
+    setTimeout(()=>{
+      document.querySelectorAll('#flash-container > div').forEach(el=>{
+        el.style.transition='opacity 0.5s';
+        el.style.opacity='0';
+        setTimeout(()=>el.remove(), 500);
+      });
+    }, 4000);
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

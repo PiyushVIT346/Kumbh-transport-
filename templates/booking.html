@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}Book Public Vehicle – Mahakumbh 2028{% endblock %}
+
+{% block head_extra %}
+<style>
+  .form-card {
+    background: rgba(255,107,0,0.04);
+    border: 1px solid rgba(212,168,67,0.2);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+  }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+  .step { 
+    flex: 1; display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+    position:relative;
+  }
+  .step::after {
+    content:'';
+    position:absolute; top:16px; left:50%; width:100%; height:1px;
+    background: rgba(212,168,67,0.2);
+  }
+  .step:last-child::after { display:none; }
+
+  .step-circle {
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.75rem; font-weight:600; z-index:1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(212,168,67,0.3);
+    color: rgba(212,168,67,0.5);
+    transition: all 0.3s;
+  }
+  .step.active .step-circle {
+    background: var(--saffron);
+    border-color: var(--saffron);
+    color: white;
+    box-shadow: 0 0 15px rgba(255,107,0,0.4);
+  }
+  .step.done .step-circle {
+    background: rgba(34,197,94,0.2);
+    border-color: rgba(34,197,94,0.6);
+    color: #4ade80;
+  }
+  .step-label { font-size:0.65rem; color:rgba(253,246,227,0.4); text-align:center; white-space:nowrap; }
+  .step.active .step-label { color: var(--gold); }
+
+  .step-panel { display:none; }
+  .step-panel.active { display:block; }
+
+  .success-modal {
+    position:fixed; inset:0; background:rgba(0,0,0,0.85);
+    display:flex; align-items:center; justify-content:center;
+    z-index:100; display:none;
+  }
+  .success-modal.show { display:flex; }
+  .success-box {
+    background: #120700;
+    border: 1px solid rgba(212,168,67,0.4);
+    border-radius: 2rem;
+    padding: 3rem;
+    text-align:center;
+    max-width:400px;
+    animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  }
+  @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+
+  label { display:block; color:rgba(212,168,67,0.8); font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:0.5rem; }
+
+  .history-card {
+    background: rgba(20, 10, 0, 0.6);
+    border: 1px solid rgba(212,168,67,0.15);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .history-table th {
+    background: rgba(212,168,67,0.1);
+    color: var(--saffron);
+    letter-spacing: 0.05em;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-6 py-10">
+
+  <div class="flex items-center gap-4 mb-8">
+    <a href="{{ url_for('dashboard') }}" class="text-amber-600 hover:text-amber-400 transition text-xl">←</a>
+    <div>
+      <h1 class="font-cinzel text-2xl text-amber-400">Book Public Vehicle</h1>
+      <p class="font-cormorant italic text-amber-100/50">
+        Reserve your seat – Journey to Mahakumbh Mela Grounds
+      </p>
+    </div>
+  </div>
+
+  <!-- Route banner -->
+  <div class="history-card">
+    <h3 class="font-cinzel text-amber-400 text-lg mb-4 text-center border-b border-amber-900/30 pb-3">Your Journey History</h3>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-amber-100/70 history-table">
+        <thead class="font-cinzel text-xs uppercase">
+          <tr>
+            <th class="px-4 py-3 rounded-tl-lg">Passenger</th>
+            <th class="px-4 py-3">Vehicle / Taxi No.</th>
+            <th class="px-4 py-3 rounded-tr-lg">Seats Booked</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in history %}
+          <tr class="border-b border-amber-900/20 hover:bg-amber-900/10 transition">
+            <td class="px-4 py-4">{{ row.username }}</td>
+            <td class="px-4 py-4 font-bold text-amber-300">{{ row.taxi_number }}
+              <div class="text-xs font-normal opacity-50 mt-1">{{ row.pickup }} ({{ row.travel_date }})</div>
+            </td>
+            <td class="px-4 py-4">{{ row.seats }} Seat(s)</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" class="px-4 py-8 text-center italic opacity-40 font-cormorant text-lg">
+              No previous bookings found. Start your journey above.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+  <div class="flex items-center gap-3 mb-8 p-4 rounded-xl border border-amber-900/30 bg-amber-900/10">
+    <div class="text-center flex-1">
+      <div class="font-cinzel text-sm text-amber-300">Your City</div>
+      <div class="font-cormorant text-lg italic text-amber-100/60">Pickup Point</div>
+    </div>
+    <div class="text-2xl text-amber-600">→→→</div>
+    <div class="text-center flex-1">
+      <div class="font-cinzel text-sm text-amber-300">Ujjain Mahakumbh</div>
+      <div class="font-cormorant text-lg italic text-amber-100/60">Ram Ghat, Ujjain</div>
+    </div>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="step-indicator" id="step-ind">
+    <div class="step active" id="si-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Route</div>
+    </div>
+    <div class="step" id="si-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Schedule</div>
+    </div>
+    <div class="step" id="si-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Confirm</div>
+    </div>
+  </div>
+
+  <form id="booking-form" class="form-card">
+
+    <!-- Step 1: Route -->
+    <div class="step-panel active" id="panel-1">
+      <h3 class="font-cinzel text-amber-300 text-sm mb-6 tracking-wide">STEP 1 — CHOOSE YOUR ROUTE</h3>
+
+      <div class="space-y-5">
+        <div>
+          <label>Pickup City / Point</label>
+          <select name="pickup" id="pickup" class="w-full rounded-xl px-4 py-3 text-sm">
+            <option value="">Select pickup point...</option>
+            <option>Indore Bus Stand</option>
+            <option>Dewas Naka</option>
+            <option>Bhopal ISBT</option>
+            <option>Ratlam Station</option>
+            <option>Nagda Junction</option>
+            <option>Maksi Road</option>
+            <option>Shujalpur</option>
+            <option>Agar Malwa</option>
+            <option>Shajapur</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Dropoff Point</label>
+          <input type="text" value="Ujjain Mahakumbh – Ram Ghat" readonly
+                class="w-full rounded-xl px-4 py-3 text-sm opacity-60 cursor-not-allowed" />
+        </div>
+
+        <div>
+          <label>Number of Seats</label>
+          <div class="flex items-center gap-4">
+            <button type="button" onclick="changeSeats(-1)"
+                    class="w-10 h-10 rounded-full border border-amber-700/50 text-amber-400 text-lg hover:bg-amber-900/30 transition">−</button>
+            <input type="number" name="seats" id="seats" value="1" min="1" max="4"
+                  class="w-20 rounded-xl px-3 py-3 text-center text-sm font-cinzel" />
+            <button type="button" onclick="changeSeats(1)"
+                    class="w-10 h-10 rounded-full border border-amber-700/50 text-amber-400 text-lg hover:bg-amber-900/30 transition">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" onclick="goStep(2)"
+              class="btn-saffron text-white font-cinzel text-sm px-8 py-3 rounded-xl tracking-widest mt-8 w-full">
+        NEXT: SCHEDULE →
+      </button>
+    </div>
+
+    <!-- Step 2: Schedule -->
+    <div class="step-panel" id="panel-2">
+      <h3 class="font-cinzel text-amber-300 text-sm mb-6 tracking-wide">STEP 2 — PICK DATE & TIME</h3>
+
+      <div class="space-y-5">
+        <div>
+          <label>Travel Date</label>
+          <input type="date" name="travel_date" id="travel_date"
+                 class="w-full rounded-xl px-4 py-3 text-sm"
+                 min="{{ ''|default('2028-01-01') }}" />
+        </div>
+        <div>
+          <label>Departure Time</label>
+          <select name="travel_time" id="travel_time" class="w-full rounded-xl px-4 py-3 text-sm">
+            <option>04:00 AM – Early Morning</option>
+            <option>06:00 AM – Morning</option>
+            <option>08:00 AM – Late Morning</option>
+            <option>10:00 AM – Midday</option>
+            <option>12:00 PM – Afternoon</option>
+            <option>02:00 PM – Evening Shuttle</option>
+            <option>05:00 PM – Sunset</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-8">
+        <button type="button" onclick="goStep(1)"
+                class="border border-amber-700/50 text-amber-400 text-sm px-6 py-3 rounded-xl hover:bg-amber-900/20 transition flex-1">
+          ← Back
+        </button>
+        <button type="button" onclick="goStep(3)"
+                class="btn-saffron text-white font-cinzel text-sm px-6 py-3 rounded-xl tracking-widest flex-1">
+          NEXT: REVIEW →
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Confirm -->
+    <div class="step-panel" id="panel-3">
+      <h3 class="font-cinzel text-amber-300 text-sm mb-6 tracking-wide">STEP 3 — REVIEW & CONFIRM</h3>
+
+      <div class="space-y-3 mb-8">
+        <div class="flex justify-between py-3 border-b border-amber-900/30">
+          <span class="text-amber-100/50 text-sm">Pickup</span>
+          <span class="text-amber-300 text-sm font-medium" id="rev-pickup">—</span>
+        </div>
+        <div class="flex justify-between py-3 border-b border-amber-900/30">
+          <span class="text-amber-100/50 text-sm">Dropoff</span>
+          <span class="text-amber-300 text-sm">Ujjain Mahakumbh – Ram Ghat</span>
+        </div>
+        <div class="flex justify-between py-3 border-b border-amber-900/30">
+          <span class="text-amber-100/50 text-sm">Seats</span>
+          <span class="text-amber-300 text-sm font-medium" id="rev-seats">—</span>
+        </div>
+        <div class="flex justify-between py-3 border-b border-amber-900/30">
+          <span class="text-amber-100/50 text-sm">Date</span>
+          <span class="text-amber-300 text-sm font-medium" id="rev-date">—</span>
+        </div>
+        <div class="flex justify-between py-3">
+          <span class="text-amber-100/50 text-sm">Time</span>
+          <span class="text-amber-300 text-sm font-medium" id="rev-time">—</span>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" onclick="goStep(2)"
+                class="border border-amber-700/50 text-amber-400 text-sm px-6 py-3 rounded-xl hover:bg-amber-900/20 transition flex-1">
+          ← Back
+        </button>
+        <button type="button" onclick="submitBooking()"
+                class="btn-saffron text-white font-cinzel text-sm px-6 py-3 rounded-xl tracking-widest flex-1">
+          ✓ CONFIRM BOOKING
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- Success Modal -->
+<div class="success-modal" id="success-modal">
+  <div class="success-box">
+    <div class="text-6xl mb-6">🎉</div>
+    <h2 class="font-cinzel text-xl text-amber-400 mb-3">Booking Confirmed!</h2>
+    <p class="font-cormorant text-lg italic text-amber-100/70 mb-6" id="modal-msg">
+      Your journey to Mahakumbh is booked.
+    </p>
+    <div class="text-4xl mb-6">🕉️</div>
+    <button onclick="document.getElementById('success-modal').classList.remove('show'); window.location.href='{{ url_for('dashboard') }}'"
+            class="btn-saffron text-white font-cinzel text-xs px-8 py-3 rounded-xl tracking-widest">
+      BACK TO DASHBOARD
+    </button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let currentStep = 1;
+
+  function changeSeats(d) {
+    const el = document.getElementById('seats');
+    el.value = Math.max(1, Math.min(4, parseInt(el.value||1) + d));
+  }
+
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById(`panel-${i}`).classList.toggle('active', i===n);
+      const si = document.getElementById(`si-${i}`);
+      si.classList.remove('active','done');
+      if (i < n) si.classList.add('done');
+      else if (i===n) si.classList.add('active');
+      if (i < n) si.querySelector('.step-circle').textContent = '✓';
+      else si.querySelector('.step-circle').textContent = i;
+    });
+    currentStep = n;
+  }
+
+  function goStep(n) {
+    if (n === 2) {
+      const p = document.getElementById('pickup').value;
+      if (!p) { alert('Please select a pickup point.'); return; }
+    }
+    if (n === 3) {
+      const d = document.getElementById('travel_date').value;
+      if (!d) { alert('Please select a travel date.'); return; }
+      // Populate review
+      document.getElementById('rev-pickup').textContent = document.getElementById('pickup').value;
+      document.getElementById('rev-seats').textContent  = document.getElementById('seats').value + ' seat(s)';
+      document.getElementById('rev-date').textContent   = d;
+      document.getElementById('rev-time').textContent   = document.getElementById('travel_time').value;
+    }
+    setStep(n);
+  }
+
+  async function submitBooking() {
+    const data = new FormData();
+    data.append('pickup',      document.getElementById('pickup').value);
+    data.append('seats',       document.getElementById('seats').value);
+    data.append('travel_date', document.getElementById('travel_date').value);
+    data.append('travel_time', document.getElementById('travel_time').value);
+
+    const res = await fetch('{{ url_for("booking") }}', { method:'POST', body:data });
+    const j   = await res.json();
+    document.getElementById('modal-msg').textContent = j.message;
+    document.getElementById('success-modal').classList.add('show');
+  }
+</script>
+{% endblock %}

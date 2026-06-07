@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ujjain Mahakumbh 2028 – Mobility Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --saffron: #FF6B00;
+      --deep-saffron: #E05A00;
+      --maroon: #7B1818;
+      --gold: #D4A843;
+      --cream: #FDF6E3;
+      --dark: #1A0A00;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--cream); overflow-x: hidden; }
+
+    .font-cinzel { font-family: 'Cinzel Decorative', serif; }
+    .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+
+    /* Mandala background */
+    .mandala-bg {
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(255,107,0,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(212,168,67,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(123,24,24,0.15) 0%, transparent 50%);
+    }
+
+    /* Hero pattern overlay */
+    .hero-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A843' fill-opacity='0.06'%3E%3Cpath d='M30 0L37.5 22.5L60 30L37.5 37.5L30 60L22.5 37.5L0 30L22.5 22.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .nav-glass {
+      background: rgba(26,10,0,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212,168,67,0.2);
+    }
+
+    .btn-saffron {
+      background: linear-gradient(135deg, var(--saffron), var(--deep-saffron));
+      box-shadow: 0 4px 20px rgba(255,107,0,0.35);
+      transition: all 0.3s ease;
+    }
+    .btn-saffron:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255,107,0,0.5);
+    }
+
+    .btn-outline-gold {
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      transition: all 0.3s ease;
+    }
+    .btn-outline-gold:hover {
+      background: var(--gold);
+      color: var(--dark);
+    }
+
+    .feature-card {
+      background: linear-gradient(145deg, rgba(255,107,0,0.08), rgba(212,168,67,0.05));
+      border: 1px solid rgba(212,168,67,0.2);
+      transition: all 0.4s ease;
+    }
+    .feature-card:hover {
+      border-color: rgba(255,107,0,0.5);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(255,107,0,0.15);
+    }
+
+    .divider-om {
+      display: flex; align-items: center; gap: 1rem;
+      color: var(--gold); opacity: 0.5;
+    }
+    .divider-om::before, .divider-om::after {
+      content: ''; flex: 1;
+      height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .float-anim { animation: float 5s ease-in-out infinite; }
+
+    @keyframes shimmer {
+      0%{background-position:-200% 0}
+      100%{background-position:200% 0}
+    }
+    .shimmer-text {
+      background: linear-gradient(90deg, var(--gold), var(--saffron), var(--cream), var(--saffron), var(--gold));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+
+    .lotus-divider { font-size: 1.5rem; color: var(--gold); letter-spacing: 1rem; opacity: 0.6; }
+
+    /* Scroll animations */
+    .reveal { opacity:0; transform:translateY(30px); transition: all 0.7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body class="mandala-bg hero-pattern">
+
+  <!-- NAV -->
+  <nav class="nav-glass fixed top-0 w-full z-50 px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🕉️</span>
+        <div>
+          <div class="font-cinzel text-sm text-yellow-400 leading-tight">Mahakumbh 2028</div>
+          <div class="font-cormorant text-xs text-amber-300 italic">Ujjain</div>
+        </div>
+      </div>
+      <div class="flex gap-3 items-center">
+        <a href="{{ url_for('login') }}"
+           class="btn-outline-gold font-inter text-sm px-5 py-2 rounded-full">
+          Login
+        </a>
+        <a href="{{ url_for('register') }}"
+           class="btn-saffron text-white font-inter text-sm px-5 py-2 rounded-full">
+          Sign Up
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 relative">
+
+    <!-- Decorative rings -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-[600px] h-[600px] rounded-full border border-amber-900/20 absolute"></div>
+      <div class="w-[800px] h-[800px] rounded-full border border-amber-900/10 absolute"></div>
+      <div class="w-[1000px] h-[1000px] rounded-full border border-amber-900/05 absolute"></div>
+    </div>
+
+    <div class="float-anim mb-8">
+      <div class="text-8xl">🕉️</div>
+    </div>
+
+    <div class="lotus-divider mb-4">⚜ ⚜ ⚜</div>
+
+    <h1 class="font-cinzel text-4xl md:text-6xl font-black mb-4 shimmer-text leading-tight">
+      Ujjain Mahakumbh
+    </h1>
+    <div class="font-cinzel text-xl md:text-3xl text-amber-400 mb-2 tracking-widest">2028</div>
+
+    <p class="font-cormorant text-2xl italic text-amber-200/80 mb-2">
+      Transportation &amp; Mobility Command Center
+    </p>
+    <p class="font-inter text-sm text-amber-100/50 mb-10 max-w-lg">
+      Smart, real-time traffic intelligence for the world's largest spiritual gathering — 
+      guiding millions safely to the sacred banks of the Shipra.
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-4 mb-16">
+      <a href="{{ url_for('register') }}"
+         class="btn-saffron text-white font-cinzel text-sm px-8 py-4 rounded-full tracking-widest">
+        BEGIN JOURNEY
+      </a>
+      <a href="{{ url_for('login') }}"
+         class="btn-outline-gold font-cinzel text-sm px-8 py-4 rounded-full tracking-widest">
+        COMMAND CENTER
+      </a>
+    </div>
+
+    <!-- Stats strip -->
+    <div class="grid grid-cols-3 gap-8 max-w-xl">
+      <div class="text-center">
+        <div class="font-cinzel text-2xl text-saffron-400" style="color:var(--saffron)">100M+</div>
+        <div class="font-inter text-xs text-amber-100/50 mt-1">Expected Pilgrims</div>
+      </div>
+      <div class="text-center border-x border-amber-900/30">
+        <div class="font-cinzel text-2xl" style="color:var(--gold)">4</div>
+        <div class="font-inter text-xs text-amber-100/50 mt-1">Smart Corridors</div>
+      </div>
+      <div class="text-center">
+        <div class="font-cinzel text-2xl text-green-400">24/7</div>
+        <div class="font-inter text-xs text-amber-100/50 mt-1">Live Monitoring</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="max-w-7xl mx-auto px-6 py-24">
+    <div class="divider-om mb-12"><span class="font-cinzel text-sm tracking-widest px-4">CORE FEATURES</span></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
+      <!-- Card 1 -->
+      <div class="feature-card rounded-2xl p-7 text-center">
+        <div class="text-5xl mb-5">🚦</div>
+        <h3 class="font-cinzel text-sm text-amber-300 mb-3 tracking-wide">LIVE ROAD MONITORING</h3>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          AI-powered CCTV analysis on 4 key corridors with real-time vehicle &amp; crowd counts.
+        </p>
+      </div>
+      <!-- Card 2 -->
+      <div class="feature-card rounded-2xl p-7 text-center">
+        <div class="text-5xl mb-5">🅿️</div>
+        <h3 class="font-cinzel text-sm text-amber-300 mb-3 tracking-wide">SMART PARKING</h3>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          Live slot availability across all major parking zones near the ghats.
+        </p>
+      </div>
+      <!-- Card 3 -->
+      <div class="feature-card rounded-2xl p-7 text-center">
+        <div class="text-5xl mb-5">🚌</div>
+        <h3 class="font-cinzel text-sm text-amber-300 mb-3 tracking-wide">TRANSIT BOOKING</h3>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          Reserve public buses and shuttles directly from your pickup point to the Mela grounds.
+        </p>
+      </div>
+      <!-- Card 4 -->
+      <div class="feature-card rounded-2xl p-7 text-center">
+        <div class="text-5xl mb-5">🗺️</div>
+        <h3 class="font-cinzel text-sm text-amber-300 mb-3 tracking-wide">LIVE ROUTING</h3>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          GPS-based navigation from your location straight to the sacred Mahakumbh grounds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- UJJAIN HIGHLIGHTS -->
+  <section class="max-w-7xl mx-auto px-6 pb-24">
+    <div class="divider-om mb-12"><span class="font-cinzel text-sm tracking-widest px-4">THE SACRED CITY</span></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+      <div class="feature-card rounded-2xl p-8">
+        <div class="text-4xl mb-4">🌊</div>
+        <h4 class="font-cinzel text-amber-300 text-sm mb-3">SHIPRA GHATS</h4>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          The sacred river where millions gather for the holy dip during Kumbh.
+        </p>
+      </div>
+      <div class="feature-card rounded-2xl p-8">
+        <div class="text-4xl mb-4">🛕</div>
+        <h4 class="font-cinzel text-amber-300 text-sm mb-3">MAHAKALESHWAR</h4>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          One of the twelve Jyotirlingas – the divine heart of Ujjain's spiritual energy.
+        </p>
+      </div>
+      <div class="feature-card rounded-2xl p-8">
+        <div class="text-4xl mb-4">✨</div>
+        <h4 class="font-cinzel text-amber-300 text-sm mb-3">SIMHASTHA 2028</h4>
+        <p class="font-cormorant text-lg text-amber-100/70 italic">
+          The auspicious planetary alignment that draws the largest peaceful gathering on Earth.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-amber-900/20 py-8 text-center">
+    <div class="font-cormorant text-amber-100/40 italic text-sm">
+      Ujjain Mahakumbh 2028 Mobility Portal &nbsp;|&nbsp; 
+      Powered by AI &amp; Smart Infrastructure
+    </div>
+    <div class="lotus-divider mt-4 text-base">🪷 🪷 🪷</div>
+  </footer>
+
+  <script>
+    // Reveal on scroll
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
+</body>
+</html>
