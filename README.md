@@ -47,13 +47,17 @@ ujjain_mahakumbh/
   </tr>
   <tr>
     <td width="50%">
-      <video src="parking_InOutFlow_count%20(1).mp4" width="100%" controls autoplay loop muted></video>
+      <video src="https://github.com/user-attachments/assets/dd1897dc-d02d-4f5d-87d6-e842f17a2b4c" width="100%" controls autoplay loop muted></video>
     </td>
     <td width="50%">
-      <video src="count_congestion%20(1).mp4" width="100%" controls autoplay loop muted></video>
+      <video src="https://github.com/user-attachments/assets/7a6d82d5-481a-41ac-bf62-f96fd8babdfb" width="100%" controls autoplay loop muted></video>
     </td>
   </tr>
 </table>
+
+
+
+https://github.com/user-attachments/assets/6935aeab-91be-426f-8b17-88dba03ff119
 
 
 ### 1. Install dependencies
@@ -128,3 +132,7 @@ In `app.py`, the YOLO logic uses:
 - **Fonts**: Cinzel Decorative (headings) + Cormorant Garamond (body) + Inter (UI)
 - **Framework**: Tailwind CSS CDN + vanilla JS
 - **Map**: Leaflet.js with OpenStreetMap tiles (no API key needed)
+
+
+
+
