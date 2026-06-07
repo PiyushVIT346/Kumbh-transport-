@@ -25,7 +25,7 @@ except Exception as e:
 
 # ── App setup ──────────────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "ujjain-kumbh-2028-secret-key")
+
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'videos')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
