@@ -47,14 +47,13 @@ ujjain_mahakumbh/
   </tr>
   <tr>
     <td width="50%">
-      <video src="parking_InOutFlow_count.mp4" width="100%" controls autoplay loop muted></video>
+      <video src="parking_InOutFlow_count%20(1).mp4" width="100%" controls autoplay loop muted></video>
     </td>
     <td width="50%">
-      <video src="count_congestion.mp4" width="100%" controls autoplay loop muted></video>
+      <video src="count_congestion%20(1).mp4" width="100%" controls autoplay loop muted></video>
     </td>
   </tr>
 </table>
-
 ### 1. Install dependencies
 
 ```bash
