@@ -3,6 +3,8 @@
 A production-ready Flask web application for managing transportation and mobility
 during the Ujjain Mahakumbh 2028 mega-event.
 
+![Alt Text](static/Screenshot 2026-06-07 124928.jpeg)
+
 ---
 
 ## 📁 Project Structure
